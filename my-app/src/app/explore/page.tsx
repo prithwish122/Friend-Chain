@@ -89,6 +89,22 @@ const explore = () => {
     await (await humorTokenContract.mint(address, ethers.parseUnits(claimAmt.toString(), 18))).wait();
 
   }
+  const donate = async () => {
+    const claimAmt = 5;
+    const contractAddress = "0x3486e41C499932DD8d395b6aF96FDebEC2Fd8d92"
+    const provider = new BrowserProvider(window.ethereum);
+
+    const signer = await provider.getSigner();
+    const address = await signer.getAddress();
+    console.log("Wallet Address:", address);
+    const humorTokenContract = new ethers.Contract(contractAddress, youXiangToken.abi, signer)
+    // mint();
+    console.log(claimAmt, "========inside withdraw===")
+
+    await (await humorTokenContract.donate(address, "0x94A7Af5edB47c3B91d1B4Ffc2CA535d7aDA8CEDe", ethers.parseUnits(claimAmt.toString(), 18))).wait();
+    // await (await humorTokenContract.mint(address, ethers.parseUnits(claimAmt.toString(), 18))).wait();
+
+  }
 
   // Sample friend suggestions data
   const friendSuggestions: Friend[] = [
@@ -189,6 +205,7 @@ const explore = () => {
           <button
             onClick={() => {
               // Handle friend request logic here
+              donate()
               onClose();
             }}
             className="flex-1 py-3 bg-white text-black rounded-lg hover:bg-white/90 transition-colors"
