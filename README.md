@@ -2,7 +2,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-## Add Contract Address to your AIA TESTNET CHAIN in wallet
+## Add YXT Token Contract Address to your AIA TESTNET CHAIN in wallet
 
 CONTRACT ADDRESS = "0x3486e41C499932DD8d395b6aF96FDebEC2Fd8d92"
 
