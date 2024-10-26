@@ -2,6 +2,12 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+## Add Contract Address to your AIA TESTNET CHAIN in wallet
+
+CONTRACT ADDRESS = "0x3486e41C499932DD8d395b6aF96FDebEC2Fd8d92"
+
+[Verify Here](https://testnet.aiascan.com/token/0x3486e41C499932DD8d395b6aF96FDebEC2Fd8d92)
+
 First, run the development server:
 
 ```bash

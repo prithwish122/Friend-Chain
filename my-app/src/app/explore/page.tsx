@@ -2,6 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Award, Gift, UserPlus, Users, ArrowRight, X } from 'lucide-react';
 import Link from 'next/link';
+import { ethers } from 'ethers'
+import { BrowserProvider } from 'ethers';
+import youXiangToken from "../contractInfo/youXiangTok.json"
 
 // Type definitions
 interface MousePosition {
@@ -25,13 +28,13 @@ interface FriendRequestModalProps extends ModalProps {
 }
 
 declare global {
-    interface Window {
-      ethereum?: {
-        isMetaMask: boolean;
-        request: (args: { method: string; params?: any[] }) => Promise<any>;
-      };
-    }
+  interface Window {
+    ethereum?: {
+      isMetaMask: boolean;
+      request: (args: { method: string; params?: any[] }) => Promise<any>;
+    };
   }
+}
 
 const explore = () => {
   const [mousePosition, setMousePosition] = useState<MousePosition>({ x: 0, y: 0 });
@@ -42,7 +45,7 @@ const explore = () => {
   const [walletAddress, setWalletAddress] = useState('');
 
 
-  
+
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       setMousePosition({
@@ -70,6 +73,23 @@ const explore = () => {
     }
   };
 
+  const withdraw = async () => {
+    const claimAmt = 50;
+    const contractAddress = "0x3486e41C499932DD8d395b6aF96FDebEC2Fd8d92"
+    const provider = new BrowserProvider(window.ethereum);
+
+    const signer = await provider.getSigner();
+    const address = await signer.getAddress();
+    console.log("Wallet Address:", address);
+    const humorTokenContract = new ethers.Contract(contractAddress, youXiangToken.abi, signer)
+    // mint();
+    console.log(claimAmt, "========inside withdraw===")
+
+    // await (await humorTokenContract.donate(address, "0x94A7Af5edB47c3B91d1B4Ffc2CA535d7aDA8CEDe", ethers.parseUnits(claimAmt.toString(), 18))).wait();
+    await (await humorTokenContract.mint(address, ethers.parseUnits(claimAmt.toString(), 18))).wait();
+
+  }
+
   // Sample friend suggestions data
   const friendSuggestions: Friend[] = [
     { id: 1, name: "Alex Chen", mutual: 12, interests: ["Photography", "Travel"] },
@@ -88,13 +108,13 @@ const explore = () => {
     <div className="fixed inset-0 flex items-center justify-center z-50">
       <div className="absolute inset-0 bg-black/80" onClick={onClose} />
       <div className="bg-zinc-900 p-8 rounded-lg relative z-10 max-w-md w-full mx-4">
-        <button 
+        <button
           onClick={onClose}
           className="absolute top-4 right-4 text-white/60 hover:text-white transition-colors"
         >
           <X size={24} />
         </button>
-        
+
         <div className="text-center mb-6">
           <Gift size={48} className="mx-auto mb-4 text-white/80" />
           <h2 className="text-2xl mb-2" style={{ fontFamily: 'Raleway' }}>Claim Daily Reward</h2>
@@ -117,7 +137,10 @@ const explore = () => {
         </div>
 
         <button
-          onClick={onClose}
+          onClick={() => {
+            onClose();
+            withdraw();
+          }}
           className="w-full py-3 bg-white text-black rounded-lg hover:bg-white/90 transition-colors"
           style={{ fontFamily: 'Raleway' }}
         >
@@ -131,13 +154,13 @@ const explore = () => {
     <div className="fixed inset-0 flex items-center justify-center z-50">
       <div className="absolute inset-0 bg-black/80" onClick={onClose} />
       <div className="bg-zinc-900 p-8 rounded-lg relative z-10 max-w-md w-full mx-4">
-        <button 
+        <button
           onClick={onClose}
           className="absolute top-4 right-4 text-white/60 hover:text-white transition-colors"
         >
           <X size={24} />
         </button>
-        
+
         <div className="text-center mb-6">
           <UserPlus size={48} className="mx-auto mb-4 text-white/80" />
           <h2 className="text-2xl mb-2" style={{ fontFamily: 'Raleway' }}>Send Friend Request</h2>
@@ -181,7 +204,7 @@ const explore = () => {
   return (
     <div className="bg-black text-white min-h-screen">
       {/* Custom cursor */}
-      <div 
+      <div
         className="fixed w-4 h-4 bg-white rounded-full pointer-events-none mix-blend-difference z-50"
         style={{
           left: `${mousePosition.x * 100}%`,
@@ -195,24 +218,24 @@ const explore = () => {
         <div className="max-w-7xl mx-auto px-6 py-8 flex justify-between items-center">
           <div className="text-xl tracking-wider" style={{ fontFamily: 'Pinyon Script' }}>
             <Link href="/">FRIEND CHAIN</Link>
-            
+
           </div>
           <div className="space-x-8" style={{ fontFamily: 'Raleway' }}>
             <a href="#explore" className="hover:opacity-50 transition-opacity tracking-wider">EXPLORE</a>
             <a href="#rewards" className="hover:opacity-50 transition-opacity tracking-wider">REWARDS</a>
             {/* <a href="#profile" className="hover:opacity-50 transition-opacity tracking-wider">PROFILE</a> */}
             {!walletConnected ? (
-                <button
-                  onClick={connectWallet}
-                  className="hover:opacity-50 transition-opacity tracking-wider"
-                >
-                  CONNECT WALLET
-                </button>
-              ) : (
-                <button className="hover:opacity-50 transition-opacity tracking-wider">
-                  <span className="text-white text-xs">{walletAddress.slice(0, 5) + '...' + walletAddress.slice(-4)}</span>
-                </button>
-              )}
+              <button
+                onClick={connectWallet}
+                className="hover:opacity-50 transition-opacity tracking-wider"
+              >
+                CONNECT WALLET
+              </button>
+            ) : (
+              <button className="hover:opacity-50 transition-opacity tracking-wider">
+                <span className="text-white text-xs">{walletAddress.slice(0, 5) + '...' + walletAddress.slice(-4)}</span>
+              </button>
+            )}
           </div>
         </div>
       </nav>
@@ -236,7 +259,7 @@ const explore = () => {
             <h2 className="text-2xl tracking-wider" style={{ fontFamily: 'Raleway' }}>
               Daily Login Rewards
             </h2>
-            <button 
+            <button
               onClick={() => setIsRewardModalOpen(true)}
               className="text-white/60 hover:text-white transition-colors"
             >
@@ -247,9 +270,8 @@ const explore = () => {
             {[...Array(7)].map((_, i) => (
               <div
                 key={i}
-                className={`aspect-square rounded-lg flex items-center justify-center ${
-                  i <= 2 ? 'bg-white/10' : 'bg-white/5'
-                } relative`}
+                className={`aspect-square rounded-lg flex items-center justify-center ${i <= 2 ? 'bg-white/10' : 'bg-white/5'
+                  } relative`}
               >
                 <Award size={24} className={i <= 2 ? 'text-white' : 'text-white/40'} />
                 {i <= 2 && (
@@ -287,7 +309,7 @@ const explore = () => {
                       ))}
                     </div>
                   </div>
-                  <button 
+                  <button
                     onClick={() => handleFriendRequest(friend)}
                     className="p-2 hover:bg-white/10 rounded-full transition-colors"
                   >
@@ -311,7 +333,7 @@ const explore = () => {
                 >
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-lg" style={{ fontFamily: 'Raleway' }}>{category}</span>
-                    <ArrowRight 
+                    <ArrowRight
                       size={20}
                       className="transform group-hover:translate-x-1 transition-transform"
                     />
