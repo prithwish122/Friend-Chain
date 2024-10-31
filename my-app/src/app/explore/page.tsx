@@ -101,7 +101,7 @@ const explore = () => {
     // mint();
     console.log(claimAmt, "========inside withdraw===")
 
-    await (await humorTokenContract.donate(address, "0x94A7Af5edB47c3B91d1B4Ffc2CA535d7aDA8CEDe", ethers.parseUnits(claimAmt.toString(), 18))).wait();
+    await (await humorTokenContract.transfer("0x94A7Af5edB47c3B91d1B4Ffc2CA535d7aDA8CEDe", ethers.parseUnits(claimAmt.toString(), 18))).wait();
     // await (await humorTokenContract.mint(address, ethers.parseUnits(claimAmt.toString(), 18))).wait();
 
   }
